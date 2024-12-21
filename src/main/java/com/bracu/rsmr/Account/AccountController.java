@@ -26,20 +26,29 @@ public class AccountController {
     @Autowired
     private UserRepository userRepository;
 
-
     @GetMapping
-    public ResponseEntity<?> status(){
+    public ResponseEntity<?> status() {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<?> transferAmount(@RequestBody Transaction transaction) throws Exception{
+    public ResponseEntity<?> transferAmount(@RequestBody Transaction transaction) throws Exception {
         Authentication authenticated = SecurityContextHolder.getContext().getAuthentication();
-        Account account = userRepository.findByUsername(authenticated.getName()).orElseThrow(() -> new AccountException("User not found")).getAccount();
+        Account account = userRepository.findByUsername(authenticated.getName())
+                .orElseThrow(() -> new AccountException("User not found")).getAccount();
 
-        transaction.setSrcId(account.getAccountId());;
+        transaction.setSrcId(account.getAccountId());
         accountService.transferAmount(transaction);
-        System.err.println("Done");
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/balance")
+    public ResponseEntity<Double> getBalance() throws Exception {
+        Authentication authenticated = SecurityContextHolder.getContext().getAuthentication();
+        Account account = userRepository.findByUsername(authenticated.getName())
+                .orElseThrow(() -> new AccountException("User not found")).getAccount();
+
+        Double balance = account.getBalance();
+        return new ResponseEntity<>(balance, HttpStatus.OK);
     }
 }

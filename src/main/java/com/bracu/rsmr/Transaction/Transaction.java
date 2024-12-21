@@ -4,16 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,9 +15,51 @@ public class Transaction {
     private String dstId;
     private Double amount;
 
+    public Transaction() {}
+
     public Transaction(String srcId, String dstId, Double amount) {
         this.srcId = srcId;
         this.dstId = dstId;
+        this.amount = amount;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTransId() {
+        return transId;
+    }
+
+    public void setTransId(String transId) {
+        this.transId = transId;
+    }
+
+    public String getSrcId() {
+        return srcId;
+    }
+
+    public void setSrcId(String srcId) {
+        this.srcId = srcId;
+    }
+
+    public String getDstId() {
+        return dstId;
+    }
+
+    public void setDstId(String dstId) {
+        this.dstId = dstId;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 }

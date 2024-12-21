@@ -15,19 +15,20 @@ public class UserPages {
 
     @Autowired
     private UserRepository userRepository;
-    
-    @GetMapping("/")
-    public String index(Model model) {
+
+    @GetMapping("/user-home")
+    public String userHome(Model model) {
         Authentication authenticated = SecurityContextHolder.getContext().getAuthentication();
         String username = authenticated.getName();
         User user = userRepository.findByUsername(username).get();
         model.addAttribute("user", user);
         List<String> roles = user.getRoles();
-        if(roles.contains("Customer"))
+        if (roles.contains("Customer"))
             return "index";
         else
             return "mindex";
     }
+
     @GetMapping("/trans")
     public String transfer(Model model) {
         return "transfer";
@@ -40,7 +41,6 @@ public class UserPages {
         List<User> filteredUsers = allUsers.stream()
                 .filter(user -> !user.getRoles().contains("Moderator"))
                 .collect(Collectors.toList());
-        System.out.println(userRepository.findByUsername("Aowfi").get().getRoles());
         model.addAttribute("users", filteredUsers);
         return "modPage";
     }

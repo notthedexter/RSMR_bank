@@ -4,6 +4,7 @@ import java.rmi.AccessException;
 import java.util.Arrays;
 import java.util.UUID;
 
+import javax.security.auth.login.AccountException;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,18 +25,21 @@ public class AccountService {
     @Autowired
     private TransactionService transactionService;
 
-    public boolean createAccount(Account account){
+    public boolean createAccount(Account account) {
         account.setAccountId(UUID.randomUUID().toString());
         accountRepository.save(account);
         return true;
     }
 
     public void transferAmount(String fromAccountId, String toAccountId, double amount) throws Exception {
-        Account fromAccount = accountRepository.findByAccountId(fromAccountId).orElseThrow(() -> new AccountNotFoundException());
-        Account toAccount = accountRepository.findByAccountId(toAccountId).orElseThrow(() -> new AccountNotFoundException());
+        Account fromAccount = accountRepository.findByAccountId(fromAccountId)
+                .orElseThrow(() -> new AccountNotFoundException());
+        Account toAccount = accountRepository.findByAccountId(toAccountId)
+                .orElseThrow(() -> new AccountNotFoundException());
 
-        if(fromAccount.getBalance() < amount)
+        if (fromAccount.getBalance() < amount) {
             throw new AccessException("Insufficient Balance");
+        }
 
         fromAccount.setBalance(fromAccount.getBalance() - amount);
         toAccount.setBalance(toAccount.getBalance() + amount);
@@ -46,7 +50,20 @@ public class AccountService {
         accountRepository.saveAll(Arrays.asList(fromAccount, toAccount));
     }
 
-    public void transferAmount(Transaction transaction) throws Exception{
+    public void transferAmount(Transaction transaction) throws Exception {
         transferAmount(transaction.getSrcId(), transaction.getDstId(), transaction.getAmount());
+    }
+
+    public Double getAccountBalance(String accountId) throws AccountException {
+        Account account = accountRepository.findByAccountId(accountId)
+                .orElseThrow(() -> new AccountException("Account not found"));
+        return account.getBalance();
+    }
+
+    public void activateAccount(String accountId) throws Exception {
+        Account account = accountRepository.findByAccountId(accountId)
+                .orElseThrow(() -> new AccountException("Account not found"));
+        account.setActive(true);
+        accountRepository.save(account);
     }
 }
