@@ -20,6 +20,7 @@ public class UserService {
     private AccountService accountService;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    private String partMod;
 
     public User createUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -59,4 +60,7 @@ public class UserService {
         return false;
     }
 
+    public void toggleMod(User user, String partMod) {
+        this.partMod = partMod;
+    }
 }
