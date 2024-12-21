@@ -2,11 +2,17 @@ package com.bracu.rsmr.Account;
 
 import java.rmi.AccessException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.security.auth.login.AccountException;
 import javax.security.auth.login.AccountNotFoundException;
 
+import com.bracu.rsmr.Transaction.TransactionRepository;
+import com.bracu.rsmr.User.User;
+import com.bracu.rsmr.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +31,16 @@ public class AccountService {
     @Autowired
     private TransactionService transactionService;
 
+    @Autowired
+    private UserRepository userRepository;
+
+
     public boolean createAccount(Account account) {
         account.setAccountId(UUID.randomUUID().toString());
         accountRepository.save(account);
         return true;
     }
+
 
     public void transferAmount(String fromAccountId, String toAccountId, double amount) throws Exception {
         Account fromAccount = accountRepository.findByAccountId(fromAccountId)
@@ -66,4 +77,11 @@ public class AccountService {
         account.setActive(true);
         accountRepository.save(account);
     }
+    public void deactivateAccount(String accountId) throws Exception {
+
+    }
+
+
+
+
 }

@@ -63,4 +63,9 @@ public class UserService {
     public void toggleMod(User user, String partMod) {
         this.partMod = partMod;
     }
+
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username); }
+
+
 }

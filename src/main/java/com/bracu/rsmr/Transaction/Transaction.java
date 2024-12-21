@@ -1,5 +1,6 @@
 package com.bracu.rsmr.Transaction;
 
+import com.bracu.rsmr.Employee.Employee;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,13 +15,17 @@ public class Transaction {
     private String srcId;
     private String dstId;
     private Double amount;
-
+    private boolean status;
+    private String employeeName;
     public Transaction() {}
 
     public Transaction(String srcId, String dstId, Double amount) {
         this.srcId = srcId;
         this.dstId = dstId;
         this.amount = amount;
+        this.status = this.amount <= 1000000;
+
+
     }
 
     public Long getId() {
@@ -61,5 +66,13 @@ public class Transaction {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employeeName = employee.getUsername();
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

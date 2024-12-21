@@ -2,6 +2,7 @@ package com.bracu.rsmr.Account;
 
 import javax.security.auth.login.AccountException;
 
+import com.bracu.rsmr.Transaction.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,9 @@ public class AccountController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private TransactionRepository transactionRepository;
+
     @GetMapping
     public ResponseEntity<?> status() {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -38,8 +42,14 @@ public class AccountController {
                 .orElseThrow(() -> new AccountException("User not found")).getAccount();
 
         transaction.setSrcId(account.getAccountId());
-        accountService.transferAmount(transaction);
-        return new ResponseEntity<>(HttpStatus.OK);
+        transaction.setSrcId(account.getAccountId()); if (transaction.getAmount() >= 1_000_000) {
+            transaction.setSrcId(account.getAccountId());
+            transactionRepository.save(transaction);
+            return new ResponseEntity<>("Transaction requires employee approval", HttpStatus.ACCEPTED);
+        } else {
+            accountService.transferAmount(transaction);
+            return new ResponseEntity<>(HttpStatus.OK); }
+
     }
 
     @GetMapping("/balance")

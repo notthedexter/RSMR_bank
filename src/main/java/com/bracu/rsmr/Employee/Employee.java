@@ -1,47 +1,53 @@
-package com.bracu.rsmr.User;
+package com.bracu.rsmr.Employee;
+
+import com.bracu.rsmr.User.User;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.bracu.rsmr.Account.Account;
-import com.bracu.rsmr.Card.Card;
-import jakarta.persistence.*;
-
 @Entity
-public class User {
+public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long eid;
     private String username;
     private String password;
     private List<String> roles;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Account account;
+    @ManyToMany
+    @JoinTable(
+            name = "employee_user",
+            joinColumns = @JoinColumn(name = "eid"),
+            inverseJoinColumns = @JoinColumn(name = "users")
+    )
+    private List<User> users;
 
-    public User() {}
+    public Employee() {
 
-    public User(String username, String password, List<String> roles) {
+    }
+
+    public Employee(String username, String password, List<String> roles) {
         this.username = username;
         this.password = password;
         this.roles = new ArrayList<>(roles);
     }
 
-    public User(String username, String password) {
+    public Employee(String username, String password) {
         this.username = username;
         this.password = password;
-        this.roles = new ArrayList<>(Arrays.asList("Customer"));
+        this.roles = new ArrayList<>(Arrays.asList("Employee", "Manager"));
+
     }
+
+
 
 
     public Long getId() {
-        return id;
+        return eid;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;
@@ -66,17 +72,11 @@ public class User {
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }
-
-    public Account getAccount() {
-        return account;
+    public List<User> getUsers() {
+        return users;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
-
-    public String getAccountId() {
-        return account != null ? account.getAccountId() : null;
-    }
-
 }
